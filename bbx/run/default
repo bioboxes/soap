@@ -1,0 +1,10 @@
+#!/bin/bash
+
+#validate yaml
+python /bbx/bin/schema_validator.py -i /bbx/input/assembler.yaml -s /bbx/schema/schema.yaml
+
+#if valid yaml run ray command
+if [ $? -eq  0 ]
+then	
+	python /bbx/bin/command_handler.py -i /bbx/input/assembler.yaml -o /bbx/output
+fi
