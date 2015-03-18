@@ -4,7 +4,7 @@ import argparse
 import yaml
 import Rx
 
-def validate_schema(input, schema):
+def validate_schema(input_yaml_path, schema_file):
     data = yaml.load(open(input_yaml_path))
     rx = Rx.Factory({ "register_core_types": True })
     schema = rx.make_schema(yaml.load(open(schema_file)))

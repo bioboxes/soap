@@ -17,28 +17,38 @@ LIB_KEY = "lib"
 
 class Assembler:
     def __init__(self, **entries):
-
-        #soap needs fragment_sizes
-        if(not entries[ARGUMENTS_KEY].has_key(FRAGMENT_SIZE_KEY)):
-            sys.exit("soap needs fragment size")
-
-        if(len(entries[ARGUMENTS_KEY][FRAGMENT_SIZE_KEY]) != len(entries[ARGUMENTS_KEY][FASTQ_KEY])):
-            sys.exit("soap needs fragment size parameter for every fastq library")
-
         self.__dict__[LIB_KEY] = dict()
         #restructure the data
-        for fastq in entries[ARGUMENTS_KEY][FASTQ_KEY]:
-            gzipped = gzip.open(fastq[PATH_KEY], 'rb')
-            gzipped_content = gzipped.read()
-            fastq_path = '/tmp/' + fastq[ID_KEY]
-            with open(fastq_path, 'w+') as extracted:
-                extracted.write(gzipped_content)
-            gzipped.close()
-            self.__dict__[LIB_KEY][fastq[ID_KEY]] = dict(path=fastq_path, type=fastq[TYPE_KEY])
+        fastq_exists = False
+        fragment_size_exists = False
+        fragment_size_length = 0
+        fastq_length = 0
+        for argument in entries[ARGUMENTS_KEY]:
+            if  argument.has_key(FASTQ_KEY):
+                fastq_exists = True
+                for fastq in argument[FASTQ_KEY]:
+                    gzipped = gzip.open(fastq[PATH_KEY], 'rb')
+                    gzipped_content = gzipped.read()
+                    fastq_path = '/tmp/' + fastq[ID_KEY]
+                    with open(fastq_path, 'w+') as extracted:
+                         extracted.write(gzipped_content)
+                    gzipped.close()
+                    self.__dict__[LIB_KEY][fastq[ID_KEY]] = dict(path=fastq_path, type=fastq[TYPE_KEY])
+            if argument.has_key(FRAGMENT_SIZE_KEY):
+                fragment_size_exists = True
+                for fragment_size in argument[FRAGMENT_SIZE_KEY]:
+                    self.__dict__[LIB_KEY][fragment_size[ID_KEY]][FRAGMENT_SIZE_KEY] = fragment_size[VALUE_KEY]
 
+        #soap needs fragment_sizes
+        if(not fastq_exists):
+            sys.exit("fastq has to be provided")
 
-        for fragment_size in entries[ARGUMENTS_KEY][FRAGMENT_SIZE_KEY]:
-            self.__dict__[LIB_KEY][fragment_size[ID_KEY]][FRAGMENT_SIZE_KEY] = fragment_size[VALUE_KEY]
+        if(not fragment_size_exists):
+            sys.exit("soap needs fragment size")
+
+        if(fastq_length != fragment_size_length):
+            sys.exit("soap needs fragment size parameter for every fastq library")
+
 
 def write_config(assembler):
     path_to_conf = '/tmp/soap.config'
@@ -80,9 +90,6 @@ if __name__ == "__main__":
 
     path = write_config(assembler)
 
-    with open(path, 'r') as fin:
-        print(fin.read())
-
     #run ray
     soap_out = output_path + "/soap"
 
@@ -94,12 +101,14 @@ if __name__ == "__main__":
     conf = " all -K 31 -p 80 -s " + path
     output = " -o " + "soap"
     command = bin + conf + output
+
     exit = os.system(command)
     if(exit==0):
-        out_dir = output_path + "/bbx"
-        if not os.path.exists(out_dir):
-            os.makedirs(out_dir)
-        yaml_output = out_dir + "/out.yaml"
-        output_data = {'version': '0.9.0', 'arguments': [{ "value": "soap/soap.contig" , "type" : "fasta"}]}
-        stream = open(yaml_output, 'w')
-        yaml.dump(output_data,default_flow_style=False,stream=stream)
+         out_dir = output_path + "/bbx"
+         if not os.path.exists(out_dir):
+             os.makedirs(out_dir)
+         yaml_output = out_dir + "/out.yaml"
+         output_data = {'version': '0.9.0', 'arguments': [{ "value": "soap/soap.contig" , "type" : "CONTIG"},
+                                                          { "value": "soap/soap.scaf" , "type" : "SCAFFOLD"}]}
+         stream = open(yaml_output, 'w')
+         yaml.dump(output_data,default_flow_style=False,stream=stream)

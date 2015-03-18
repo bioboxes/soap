@@ -1,31 +1,44 @@
 ---
-  type: "//rec"
-  required: 
+type: "//rec"
+required: 
     version: "//str"
     arguments: 
-      type: "//rec"
-      required: 
-        fastq: 
-          type: "//arr"
-          contents: 
+      type: "//arr"
+      length: 
+        min: 1
+      contents: 
+        type: "//any"
+        of: 
+          - 
             type: "//rec"
             required: 
-              path: "//str"
-              id: "//str"
-              type: 
-                type: "//any"
-                of: 
-                  - 
-                    type: "//str"
-                    value: "paired"
-                  - 
-                    type: "//str"
-                    value: "single"
-      optional: 
-        fragment_size: 
-          type: "//arr"
-          contents: 
+              fastq: 
+                type: "//arr"
+                contents: 
+                  type: "//rec"
+                  required: 
+                    path: "//str"
+                    id: "//str"
+                    type: 
+                      type: "//any"
+                      of: 
+                        - 
+                          type: "//str"
+                          value: "paired"
+                        - 
+                          type: "//str"
+                          value: "single"
+                length: 
+                  min: 1
+          - 
             type: "//rec"
             required: 
-              id: "//str"
-              value: "//num"
+              fragment_size: 
+                type: "//arr"
+                contents: 
+                  type: "//rec"
+                  required: 
+                    id: "//str"
+                    value: "//num"
+                length: 
+                  min: 1
