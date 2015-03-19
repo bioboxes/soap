@@ -14,6 +14,7 @@ PATH_KEY = "path"
 VALUE_KEY = "value"
 ID_KEY = "id"
 LIB_KEY = "lib"
+BBX_INPUT_DIR = "/bbx/input/"
 
 class Assembler:
     def __init__(self, **entries):
@@ -27,7 +28,7 @@ class Assembler:
             if  argument.has_key(FASTQ_KEY):
                 fastq_exists = True
                 for fastq in argument[FASTQ_KEY]:
-                    gzipped = gzip.open(fastq[PATH_KEY], 'rb')
+                    gzipped = gzip.open(BBX_INPUT_DIR + fastq[PATH_KEY], 'rb')
                     gzipped_content = gzipped.read()
                     fastq_path = '/tmp/' + fastq[ID_KEY]
                     with open(fastq_path, 'w+') as extracted:
