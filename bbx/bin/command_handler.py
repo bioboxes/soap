@@ -16,23 +16,24 @@ ID_KEY = "id"
 LIB_KEY = "lib"
 BBX_INPUT_DIR = "/bbx/input/"
 
+
 class Assembler:
     def __init__(self, **entries):
         self.__dict__[LIB_KEY] = dict()
-        #restructure the data
+        # restructure the data
         fastq_exists = False
         fragment_size_exists = False
         fragment_size_length = 0
         fastq_length = 0
         for argument in entries[ARGUMENTS_KEY]:
-            if  argument.has_key(FASTQ_KEY):
+            if argument.has_key(FASTQ_KEY):
                 fastq_exists = True
                 for fastq in argument[FASTQ_KEY]:
                     gzipped = gzip.open(BBX_INPUT_DIR + fastq[PATH_KEY], 'rb')
                     gzipped_content = gzipped.read()
                     fastq_path = '/tmp/' + fastq[ID_KEY]
                     with open(fastq_path, 'w+') as extracted:
-                         extracted.write(gzipped_content)
+                        extracted.write(gzipped_content)
                     gzipped.close()
                     self.__dict__[LIB_KEY][fastq[ID_KEY]] = dict(path=fastq_path, type=fastq[TYPE_KEY])
             if argument.has_key(FRAGMENT_SIZE_KEY):
@@ -41,39 +42,40 @@ class Assembler:
                     self.__dict__[LIB_KEY][fragment_size[ID_KEY]][FRAGMENT_SIZE_KEY] = fragment_size[VALUE_KEY]
 
         #soap needs fragment_sizes
-        if(not fastq_exists):
+        if (not fastq_exists):
             sys.exit("fastq has to be provided")
 
-        if(not fragment_size_exists):
+        if (not fragment_size_exists):
             sys.exit("soap needs fragment size")
 
-        if(fastq_length != fragment_size_length):
+        if (fastq_length != fragment_size_length):
             sys.exit("soap needs fragment size parameter for every fastq library")
 
 
 def write_config(assembler):
     path_to_conf = '/tmp/soap.config'
     conf = open(path_to_conf, 'w+')
-    for lib_id in  assembler.lib.keys():
-       conf.write("[LIB]\n")
-       conf.write("avg_ins="+str(assembler.lib[lib_id][FRAGMENT_SIZE_KEY])+"\n")
+    for lib_id in assembler.lib.keys():
+        conf.write("[LIB]\n")
+        conf.write("avg_ins=" + str(assembler.lib[lib_id][FRAGMENT_SIZE_KEY]) + "\n")
 
-       type = ""
-       if(assembler.lib[lib_id][TYPE_KEY] == "paired"):
+        type = ""
+        if (assembler.lib[lib_id][TYPE_KEY] == "paired"):
             type = "p="
-       elif(assembler.lib[lib_id][TYPE_KEY] == "single"):
+        elif (assembler.lib[lib_id][TYPE_KEY] == "single"):
             type = "q="
-       conf.write(type + str(assembler.lib[lib_id][PATH_KEY])+"\n")
+        conf.write(type + str(assembler.lib[lib_id][PATH_KEY]) + "\n")
     conf.close()
     return path_to_conf
 
+
 if __name__ == "__main__":
-    #Parse arguments
+    # Parse arguments
     parser = argparse.ArgumentParser(description='Parses input yaml')
     parser.add_argument('-i', '--input_yaml', dest='i', nargs=1,
                         help='YAML input file')
     parser.add_argument('-o', '--output_path', dest='o', nargs=1,
-                    help='Output path')
+                        help='Output path')
     args = parser.parse_args()
 
     #get input files
@@ -104,12 +106,17 @@ if __name__ == "__main__":
     command = bin + conf + output
 
     exit = os.system(command)
-    if(exit==0):
-         out_dir = output_path + "/bbx"
-         if not os.path.exists(out_dir):
-             os.makedirs(out_dir)
-         yaml_output = out_dir + "/out.yaml"
-         output_data = {'version': '0.9.0', 'arguments': [{ "value": "soap/soap.contig" , "type" : "contig"},
-                                                          { "value": "soap/soap.scaf" , "type" : "scaffold"}]}
-         stream = open(yaml_output, 'w')
-         yaml.dump(output_data,default_flow_style=False,stream=stream)
+    if (exit == 0):
+        out_dir = output_path + "/bbx"
+        if not os.path.exists(out_dir):
+            os.makedirs(out_dir)
+        yaml_output = out_dir + "/out.yaml"
+        output_data = {'version': '0.9.0', 'arguments': [{
+                                                             'fasta': [{"value": "soap/soap.contig", "type": "contig",
+                                                                        "id": "1"},
+                                                                       {"value": "soap/soap.scaf", "type": "scaffold",
+                                                                        "id" : "2"}]
+                                                         }]}
+
+        stream = open(yaml_output, 'w')
+        yaml.dump(output_data, default_flow_style=False, stream=stream)
