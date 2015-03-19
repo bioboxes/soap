@@ -7,7 +7,7 @@ Signature: `soap:[fastq A],[fragment_size B] -> contigs C, scaffolds D`
 1. git clone https://github.com/bioboxes/soap
 2. cd soap
 3. docker build -t soap .
-4. sudo docker run -v /path/to/your/assembler.yaml:/bbx/input/assembler.yaml -v /path/to/reads.fastq.gz:/bbx/input/reads.fastq.gz -v /path/to/output:/bbx/output ray
+4. sudo docker run -v /path/to/your/assembler.yaml:/bbx/input/assembler.yaml -v /path/to/reads.fastq.gz:/bbx/input/test1/reads.fastq.gz -v /path/to/output:/bbx/output ray
 
 #### Example assembler.yaml:
 ```YAML
@@ -16,7 +16,7 @@ version: 0.9.0
 arguments:
     - fastq:
       - id: "pe" 
-        value: "/dckr/mnt/input/reads.fastq.gz"
+        value: "test1/reads.fastq.gz"
         type: single
     - fragment_size:
       - id: "pe"
