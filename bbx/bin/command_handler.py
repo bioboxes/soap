@@ -109,7 +109,7 @@ if __name__ == "__main__":
          if not os.path.exists(out_dir):
              os.makedirs(out_dir)
          yaml_output = out_dir + "/out.yaml"
-         output_data = {'version': '0.9.0', 'arguments': [{ "value": "soap/soap.contig" , "type" : "CONTIG"},
-                                                          { "value": "soap/soap.scaf" , "type" : "SCAFFOLD"}]}
+         output_data = {'version': '0.9.0', 'arguments': [{ "value": "soap/soap.contig" , "type" : "contig"},
+                                                          { "value": "soap/soap.scaf" , "type" : "scaffold"}]}
          stream = open(yaml_output, 'w')
          yaml.dump(output_data,default_flow_style=False,stream=stream)
