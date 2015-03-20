@@ -2,14 +2,19 @@ __author__ = 'pbelmann'
 
 import argparse
 import yaml
-import Rx
+import json
+import sys
+import os
+from jsonschema import Draft4Validator
+from jsonschema.exceptions import best_match
 
 def validate_schema(input_yaml_path, schema_file):
-    data = yaml.load(open(input_yaml_path))
-    rx = Rx.Factory({ "register_core_types": True })
-    schema = rx.make_schema(yaml.load(open(schema_file)))
-    if not schema.check(data):
-        raise ValueError("YAML is not in a valid format. Please check the definition on bioboxes.")
+    json_data_in = yaml.load(open(input_yaml_path))
+    json_in = json.dumps(json_data_in)
+    json_data_schema = json.load(open(schema_file))
+    error = best_match(Draft4Validator(json_data_schema).iter_errors(json_data_in))
+    if(error):
+        sys.exit(error.message)
 
 if __name__ == "__main__":
     #Parse arguments
