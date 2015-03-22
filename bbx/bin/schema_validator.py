@@ -4,17 +4,25 @@ import argparse
 import yaml
 import json
 import sys
-import os
 from jsonschema import Draft4Validator
 from jsonschema.exceptions import best_match
 
 def validate_schema(input_yaml_path, schema_file):
-    json_data_in = yaml.load(open(input_yaml_path))
-    json_in = json.dumps(json_data_in)
+
+    json_data_in = None
+    try:
+       json_data_in = yaml.load(open(input_yaml_path, 'r'))
+    except yaml.YAMLError as exc:
+       sys.stderr.write("Error parsing: \"/bbx/input/assembler.yaml\".\n" +
+                                         "This file is not valid YAML.")
+       return 1
+
     json_data_schema = json.load(open(schema_file))
     error = best_match(Draft4Validator(json_data_schema).iter_errors(json_data_in))
     if(error):
-        sys.exit(error.message)
+        sys.stderr.write("Error parsing: \"/bbx/input/assembler.yaml\".\n" + error.message)
+        return 1
+    return 0
 
 if __name__ == "__main__":
     #Parse arguments
@@ -33,4 +41,4 @@ if __name__ == "__main__":
     if hasattr(args, 's'):
         schema_file = args.s[0]
 
-    validate_schema(input_yaml_path,schema_file)
+    sys.exit(validate_schema(input_yaml_path,schema_file))

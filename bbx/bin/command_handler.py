@@ -13,7 +13,7 @@ FASTQ_KEY = "fastq"
 VALUE_KEY = "value"
 ID_KEY = "id"
 LIB_KEY = "lib"
-BBX_INPUT_DIR = "/bbx/input/"
+BBX_INPUT_DIR = "/bbx/input"
 
 
 class Assembler:
@@ -111,9 +111,9 @@ if __name__ == "__main__":
             os.makedirs(out_dir)
         yaml_output = out_dir + "/out.yaml"
         output_data = {'version': '0.9.0', 'arguments': [{
-                                                             'fasta': [{"value": "soap/soap.contig", "type": "contig",
+                                                             'fasta': [{"value": "/soap/soap.contig", "type": "contig",
                                                                         "id": "1"},
-                                                                       {"value": "soap/soap.scaf", "type": "scaffold",
+                                                                       {"value": "/soap/soap.scaf", "type": "scaffold",
                                                                         "id" : "2"}]
                                                          }]}
 
