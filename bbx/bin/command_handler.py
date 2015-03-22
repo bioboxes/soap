@@ -34,7 +34,7 @@ class Assembler:
                     with open(fastq_path, 'w+') as extracted:
                         extracted.write(gzipped_content)
                     gzipped.close()
-                    self.__dict__[LIB_KEY][fastq[ID_KEY]] = dict(path=fastq_path, type=fastq[TYPE_KEY])
+                    self.__dict__[LIB_KEY][fastq[ID_KEY]] = dict(value=fastq_path, type=fastq[TYPE_KEY])
             if argument.has_key(FRAGMENT_SIZE_KEY):
                 fragment_size_exists = True
                 for fragment_size in argument[FRAGMENT_SIZE_KEY]:
@@ -63,7 +63,7 @@ def write_config(assembler):
             type = "p="
         elif (assembler.lib[lib_id][TYPE_KEY] == "single"):
             type = "q="
-        conf.write(type + str(assembler.lib[lib_id][PATH_KEY]) + "\n")
+        conf.write(type + str(assembler.lib[lib_id][VALUE_KEY]) + "\n")
     conf.close()
     return path_to_conf
 
