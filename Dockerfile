@@ -16,10 +16,14 @@ RUN tar xzvf /opt/bin/PyYAML-3.11.tar.gz -C /opt/bin
 WORKDIR /opt/bin/PyYAML-3.11
 RUN python setup.py install
 
-#add schema, parser and run command 
+#add schema, parser and run command
 ADD bbx/ /bbx
-RUN apt-get install -y python-pip
-RUN pip install jsonschema
 RUN chmod a+x /bbx/run/default
+
+#load the input-validator
+ENV BASE_URL https://s3-us-west-1.amazonaws.com/bioboxes-tools/validate-input
+ENV VERSION  validate-input-current.tar.xz
+RUN apt-get install -y xz-utils
+RUN wget --quiet --output-document - ${BASE_URL}/${VERSION} |  tar xJf - --directory /bbx/bin/biobox-validator  --strip-components=1
 
 ENV PATH /bbx/run:$PATH

@@ -13,7 +13,7 @@ then
 fi
 
 #validate yaml
-python /bbx/bin/schema_validator.py -i /bbx/input/assembler.yaml -s /bbx/schema/schema.json
+/bbx/bin/biobox-validator/validate-input --schema=/bbx/schema/schema.yaml --input=/bbx/input/assembler.yaml
 
 #if valid yaml run ray command
 if [ $? -eq  0 ]
