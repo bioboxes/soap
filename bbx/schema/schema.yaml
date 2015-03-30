@@ -1,8 +1,8 @@
 ---
-  $schema: "http://json-schema.org/draft-04/schema#"
-  title: "Bioboxes short read assembler input file validator"
-  type: "object"
-  properties: 
+$schema: "http://json-schema.org/draft-04/schema#"
+title: "Bioboxes short read assembler input file validator"
+type: "object"
+properties: 
     version: 
       type: "string"
       pattern: "^0.9.\\d+$"
@@ -11,15 +11,16 @@
       minItems: 1
       maxItems: 2
       items: 
-        - 
-          $ref: "#/definitions/fastq"
-        - 
-          $ref: "#/definitions/fragment"
-  required: 
+        oneOf: 
+          - 
+            $ref: "#/definitions/fastq"
+          - 
+            $ref: "#/definitions/fragment"
+required: 
     - "version"
     - "arguments"
-  additionalProperties: false
-  definitions: 
+additionalProperties: false
+definitions: 
     fastq: 
       type: "object"
       additionalProperties: false
@@ -48,4 +49,3 @@
           id: {}
           type: {}
           value: {}
-
