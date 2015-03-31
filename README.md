@@ -34,5 +34,5 @@ arguments:
 * "default" task at the end of your docker run command
 
 ####!Note this is not meant for production, it is a showcase for
-* checking a provided yaml against a rx schema
+* checking a provided yaml against a json-schema schema
 * provide different parameters for an assembler (paired,single,fragment_size)
