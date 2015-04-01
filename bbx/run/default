@@ -1,17 +1,5 @@
 #!/bin/bash
 
-#check if file exists
-if [ ! -f /bbx/input/biobox.yaml ]
-then
-    printf 'No input data found at: "/bbx/input/biobox.yaml".' >&2 ; exit 1;
-fi
-
-#check if file is empty
-if [ ! -s /bbx/input/biobox.yaml ]
-then
-    printf 'Unable to parse: "/bbx/input/biobox.yaml".' >&2 ; exit 1;
-fi
-
 #validate yaml
 /bbx/bin/biobox-validator/validate-input --schema=/bbx/schema/schema.yaml --input=/bbx/input/biobox.yaml
 
