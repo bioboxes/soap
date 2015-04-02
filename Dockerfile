@@ -24,6 +24,7 @@ RUN chmod a+x /bbx/run/default
 ENV BASE_URL https://s3-us-west-1.amazonaws.com/bioboxes-tools/validate-input
 ENV VERSION  validate-input-current.tar.xz
 RUN apt-get install -y xz-utils
+RUN mkdir -p /bbx/bin/biobox-validator
 RUN wget --quiet --output-document - ${BASE_URL}/${VERSION} |  tar xJf - --directory /bbx/bin/biobox-validator  --strip-components=1
 
 ENV PATH /bbx/run:$PATH
