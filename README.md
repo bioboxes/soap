@@ -16,7 +16,7 @@ version: 0.9.0
 arguments:
     - fastq:
       - id: "pe" 
-        value: "/test1/reads.fastq.gz"
+        value: "/bbx/input/test1/reads.fastq.gz"
         type: single
     - fragment_size:
       - id: "pe"
@@ -26,9 +26,7 @@ arguments:
 ## Required
 * biobox.yaml : Please see https://github.com/bioboxes/rfc/issues/90 for current definition.
 * gzipped reads with the path provided in biobox.yaml
-* mount your input files to /bbx/input. The path provided in biobox.yaml is relative to /bbx/input
-  * Example: When you mount your file to /bbx/input/test1/reads.fastq.gz then you have to provide the path
-    "/test1/reads.fastq.gz" in the yaml file.
+* mount your input files to /bbx/input. 
 * mount your output directory to /bbx/output
 * mount your biobox.yaml to /bbx/input/biobox.yaml
 * "default" task at the end of your docker run command
