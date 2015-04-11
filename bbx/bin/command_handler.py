@@ -28,7 +28,7 @@ class Assembler:
             if argument.has_key(FASTQ_KEY):
                 fastq_exists = True
                 for fastq in argument[FASTQ_KEY]:
-                    gzipped = gzip.open(BBX_INPUT_DIR + fastq[VALUE_KEY], 'rb')
+                    gzipped = gzip.open(fastq[VALUE_KEY], 'rb')
                     gzipped_content = gzipped.read()
                     fastq_path = '/tmp/' + fastq[ID_KEY]
                     with open(fastq_path, 'w+') as extracted:
