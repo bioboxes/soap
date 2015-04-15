@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #validate yaml
-/bbx/bin/biobox-validator/validate-input --schema=/bbx/schema/schema.yaml --input=/bbx/input/biobox.yaml
+/bbx/bin/biobox-validator/validate-biobox-file --schema=/bbx/schema/schema.yaml --input=/bbx/input/biobox.yaml
 
 #if valid yaml run ray command
 if [ $? -eq  0 ]
