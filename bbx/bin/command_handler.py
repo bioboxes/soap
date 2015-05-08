@@ -106,7 +106,7 @@ if __name__ == "__main__":
 
     exit = os.system(command)
     if (exit == 0):
-        out_dir = output_path + "/bbx"
+        out_dir = output_path
         if not os.path.exists(out_dir):
             os.makedirs(out_dir)
         yaml_output = out_dir + "/biobox.yaml"
