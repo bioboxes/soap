@@ -1,5 +1,7 @@
 __author__ = 'pbelmann'
 
+from subprocess import Popen, PIPE, STDOUT
+import shlex
 import argparse
 import yaml
 import gzip
@@ -15,6 +17,7 @@ ID_KEY = "id"
 LIB_KEY = "lib"
 BBX_INPUT_DIR = "/bbx/input"
 BBX_METADATA = "/bbx/metadata"
+
 
 class Assembler:
     def __init__(self, **entries):
@@ -40,7 +43,7 @@ class Assembler:
                 for fragment_size in argument[FRAGMENT_SIZE_KEY]:
                     self.__dict__[LIB_KEY][fragment_size[ID_KEY]][FRAGMENT_SIZE_KEY] = fragment_size[VALUE_KEY]
 
-        #soap needs fragment_sizes
+        # soap needs fragment_sizes
         if (not fastq_exists):
             sys.exit("fastq has to be provided")
 
@@ -57,7 +60,6 @@ def write_config(assembler):
     for lib_id in assembler.lib.keys():
         conf.write("[LIB]\n")
         conf.write("avg_ins=" + str(assembler.lib[lib_id][FRAGMENT_SIZE_KEY]) + "\n")
-
         type = ""
         if (assembler.lib[lib_id][TYPE_KEY] == "paired"):
             type = "p="
@@ -77,7 +79,7 @@ if __name__ == "__main__":
                         help='Output path')
     args = parser.parse_args()
 
-    #get input files
+    # get input files
     input_yaml_path = ""
     output_path = ""
     if hasattr(args, 'i'):
@@ -85,7 +87,7 @@ if __name__ == "__main__":
     if hasattr(args, 'o'):
         output_path = args.o[0]
 
-    #serialize yaml with python object
+    # serialize yaml with python object
     f = open(input_yaml_path)
     assembler = Assembler(**yaml.safe_load(f))
     f.close()
@@ -104,10 +106,18 @@ if __name__ == "__main__":
     output = " -o " + "soap"
     command = bin + conf + output
 
+    exit = 0
     if os.path.exists(BBX_METADATA):
-       command = command + " >& " + BBX_METADATA + "/log.txt"
-
-    exit = os.system(command)
+        log = BBX_METADATA + "/log.txt"
+        tsk = Popen(shlex.split(command), stdout=PIPE, stderr=STDOUT)
+        logfile = open(log, 'a')
+        while tsk.poll() is None:
+            line = tsk.stdout.readline()
+            logfile.write(line)
+        logfile.close()
+        exit = tsk.returncode
+    else:
+        exit = os.system(command)
     if (exit == 0):
         out_dir = output_path
         if not os.path.exists(out_dir):
@@ -117,7 +127,7 @@ if __name__ == "__main__":
                                                              'fasta': [{"value": "/soap/soap.contig", "type": "contig",
                                                                         "id": "1"},
                                                                        {"value": "/soap/soap.scaf", "type": "scaffold",
-                                                                        "id" : "2"}]
+                                                                        "id": "2"}]
                                                          }]}
 
         stream = open(yaml_output, 'w')
