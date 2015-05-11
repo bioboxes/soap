@@ -14,7 +14,7 @@ VALUE_KEY = "value"
 ID_KEY = "id"
 LIB_KEY = "lib"
 BBX_INPUT_DIR = "/bbx/input"
-
+BBX_METADATA = "/bbx/metadata"
 
 class Assembler:
     def __init__(self, **entries):
@@ -103,6 +103,9 @@ if __name__ == "__main__":
     conf = " all -K 31 -p 80 -s " + path
     output = " -o " + "soap"
     command = bin + conf + output
+
+    if os.path.exists(BBX_METADATA):
+       command = command + " >& " + BBX_METADATA + "/log.txt"
 
     exit = os.system(command)
     if (exit == 0):
